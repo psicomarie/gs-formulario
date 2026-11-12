@@ -1,0 +1,464 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<base target="_top">
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Gente Saludable · Tus datos</title>
+<meta name="robots" content="noindex">
+<style>
+:root{--azul:#205599;--verde:#99c221;--verde-o:#6f9a12;--ink:#14233a;--muted:#566781;--line:#d5dde9;--bg:#f2f5f9;--card:#fff;--rojo:#b3261e}
+*{box-sizing:border-box}
+html{-webkit-text-size-adjust:100%}
+body{margin:0;background:var(--bg);color:var(--ink);font-family:'Segoe UI',Roboto,Arial,sans-serif;font-size:17px;line-height:1.45}
+header{background:#fff;border-bottom:4px solid var(--verde);padding:10px 16px;display:flex;align-items:center;gap:12px}
+header img{height:52px;width:auto;display:block}
+header div{font-size:14px;color:var(--muted);line-height:1.3}
+header b{display:block;color:var(--azul);font-size:16px}
+.chipTipo{display:inline-block;margin-top:3px;border-radius:999px;padding:1px 10px;font-size:13px;font-weight:700}
+.chipTipo.adm{background:#dbe7f7;color:var(--azul)}
+.chipTipo.anu{background:#eaf4cf;color:#2f4a00}
+main{max-width:560px;margin:0 auto;padding:16px 16px 110px}
+.prog{display:flex;gap:6px;margin:4px 0 14px}
+.prog i{flex:1;height:6px;border-radius:3px;background:#cfd8e6}
+.prog i.on{background:var(--azul)}
+h1{font-size:22px;margin:0 0 4px;color:var(--azul)}
+p.ayuda{margin:0 0 14px;color:var(--muted);font-size:15px}
+section{display:none}
+section.ver{display:block}
+label.campo{display:block;font-weight:600;margin:14px 0 0}
+label.campo small{font-weight:400;color:var(--muted);display:block;font-size:14px}
+input[type=text],input[type=tel],input[type=date],input[type=number],select,textarea{width:100%;font:inherit;padding:12px;border:1.5px solid var(--line);border-radius:10px;background:#fff;color:var(--ink);margin-top:5px}
+input:disabled{background:#e9eef5;color:var(--muted)}
+textarea{min-height:84px;resize:vertical}
+input:focus,select:focus,textarea:focus,button:focus-visible{outline:3px solid #8fb8f5;outline-offset:1px}
+.fila2{display:grid;grid-template-columns:1fr 90px;gap:10px}
+.edad{margin-top:5px;padding:12px;border-radius:10px;background:#e9eef5;text-align:center;font-weight:700;color:var(--muted)}
+h2{font-size:18px;margin:22px 0 8px;color:var(--ink)}
+h3{font-size:15px;margin:20px 0 6px;color:#fff;background:var(--azul);padding:7px 12px;border-radius:8px;letter-spacing:.02em}
+.op{display:flex;gap:12px;align-items:flex-start;background:var(--card);border:1.5px solid var(--line);border-radius:12px;padding:12px 14px;margin-top:8px;cursor:pointer}
+.op input{width:24px;height:24px;margin:1px 0 0;flex:none;accent-color:var(--azul)}
+.op span{flex:1}
+.op small{display:block;color:var(--muted);font-size:14px;font-weight:400}
+.op.on{border-color:var(--azul);background:#eef4fc}
+.esp{margin:-2px 0 0 0}
+.sn{display:flex;gap:10px;margin-top:8px}
+.sn label{flex:1}
+.sn input{position:absolute;opacity:0;width:1px;height:1px}
+.sn span{display:block;text-align:center;padding:12px;border:1.5px solid var(--line);border-radius:10px;background:#fff;font-weight:700;cursor:pointer}
+.sn input:checked+span{background:var(--azul);border-color:var(--azul);color:#fff}
+.sn input:focus-visible+span{outline:3px solid #8fb8f5}
+.oblig{background:#fff;border:2px solid var(--azul);border-radius:12px;padding:12px 14px;margin-top:10px}
+.oblig p{margin:0;font-weight:700}
+.oblig .marca{display:inline-block;font-size:12px;font-weight:700;color:var(--azul);background:#dbe7f7;border-radius:999px;padding:1px 8px;margin-bottom:6px}
+.oblig.falta{border-color:var(--rojo);background:#fdf3f2}
+.err{color:var(--rojo);font-weight:600;margin:12px 0 0;display:none}
+.err.ver{display:block}
+.nota{background:#fff7dc;border-radius:10px;padding:10px 12px;font-size:15px;color:#6b4a00;margin:10px 0}
+nav{position:fixed;left:0;right:0;bottom:0;background:#fff;border-top:1px solid var(--line);padding:10px 16px calc(10px + env(safe-area-inset-bottom,0px));display:flex;gap:10px;justify-content:center}
+nav button{font:inherit;font-weight:700;border-radius:12px;padding:14px 18px;border:0;cursor:pointer;flex:1;max-width:260px}
+#atras{background:#fff;color:var(--azul);border:1.5px solid var(--azul)}
+#sigue{background:var(--azul);color:#fff}
+#sigue:disabled{opacity:.5}
+.listo{text-align:center;padding:26px 8px}
+.listo .ok{width:76px;height:76px;border-radius:50%;background:var(--verde);color:#2f4a00;font-size:42px;display:grid;place-items:center;margin:0 auto 14px;font-weight:800}
+.resumen{background:#fff;border:1.5px solid var(--line);border-radius:12px;padding:12px 14px;margin:8px 0;font-size:15px}
+.resumen b{color:var(--azul)}
+.elegir{display:grid;gap:14px;margin-top:16px}
+.elegir button{font:inherit;text-align:left;border-radius:16px;padding:18px 18px;cursor:pointer;border:2px solid var(--azul);background:#fff;color:var(--ink);display:grid;gap:4px}
+.elegir button b{font-size:20px;color:var(--azul)}
+.elegir button span{color:var(--muted);font-size:15px}
+.elegir button.anu{border-color:var(--verde-o)}
+.elegir button.anu b{color:#4a6b06}
+.elegir button:active{transform:scale(.99)}
+.cambiar{background:none;border:0;color:var(--azul);font:inherit;font-size:15px;text-decoration:underline;padding:0;margin:4px 0 0;cursor:pointer}
+</style>
+</head>
+<body>
+<header>
+  <img src="data:image/png;base64,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" alt="Gente Saludable">
+  <div><b>Completá tus datos</b>Antes de pasar con el médico<br><span class="chipTipo" id="chipTipo" style="display:none"></span></div>
+</header>
+<main id="main">
+  <div class="prog" id="prog" aria-hidden="true"></div>
+
+  <!-- CARGANDO (solo en la página de GitHub) -->
+  <section id="sCarga" class="ver">
+    <p class="ayuda" id="cargaMsg" style="margin-top:24px">Cargando el formulario…</p>
+    <button type="button" id="reintentar" style="display:none;font:inherit;font-weight:700;border:0;border-radius:12px;padding:14px 18px;background:var(--azul);color:#fff">Probar de nuevo</button>
+  </section>
+
+  <!-- ELEGIR EL TIPO DE EXAMEN (solo si el enlace no lo trae) -->
+  <section id="sTipo">
+    <h1>¿Qué examen venís a hacer?</h1>
+    <p class="ayuda">Tocá una opción. Si no sabés, preguntá en recepción.</p>
+    <div class="elegir">
+      <button type="button" data-tipo="admisional"><b>Examen de ingreso</b><span>Vas a empezar a trabajar en una empresa (Admisional).</span></button>
+      <button type="button" class="anu" data-tipo="anual"><b>Examen anual</b><span>Ya trabajás en la empresa y te toca el control de cada año (Periódico).</span></button>
+    </div>
+  </section>
+
+  <!-- DATOS (los dos tipos) -->
+  <section id="s0">
+    <h1>Tus datos</h1>
+    <p class="ayuda">Escribilos como figuran en tu cédula de identidad.</p>
+    <button type="button" class="cambiar" id="cambiarTipo" style="display:none">¿No es tu examen? Cambiar</button>
+    <label class="campo" for="ape">Apellidos <small>Todos tus apellidos</small></label>
+    <input type="text" id="ape" autocomplete="family-name" autocapitalize="words">
+    <label class="campo" for="nom">Nombres <small>Todos tus nombres</small></label>
+    <input type="text" id="nom" autocomplete="given-name" autocapitalize="words">
+    <label class="campo" for="ci">Número de cédula de identidad</label>
+    <input type="text" id="ci" inputmode="numeric" autocomplete="off">
+    <div class="fila2">
+      <div><label class="campo" for="nac">Fecha de nacimiento</label><input type="date" id="nac"></div>
+      <div><label class="campo" for="edad">Edad</label><div class="edad" id="edad">—</div></div>
+    </div>
+    <label class="campo" for="emp" id="empLbl">Empresa donde trabajás</label>
+    <select id="emp"></select>
+    <input type="text" id="empOtra" placeholder="Escribí el nombre de la empresa" style="display:none">
+    <label class="campo" for="tarea" id="tareaLbl">Tarea que desempeñás <small>Por ejemplo: chofer, operario, administrativo</small></label>
+    <input type="text" id="tarea" autocomplete="off">
+    <label class="campo" for="dom">Domicilio</label>
+    <input type="text" id="dom" autocomplete="street-address">
+    <label class="campo" for="tel">Teléfono (con WhatsApp)</label>
+    <input type="tel" id="tel" autocomplete="tel" placeholder="0981 000 000">
+  </section>
+
+  <!-- ANUAL · 2 -->
+  <section id="s1">
+    <h1>Tu trabajo</h1>
+    <p class="ayuda">Marcá <b>solo lo que SÍ</b> te pasa o te pasó. Lo que no marques se toma como NO.</p>
+    <h3>¿Actualmente se encuentra en…?</h3>
+    <div id="labs"></div>
+    <h3>¿Ha sufrido accidente/s?</h3>
+    <div id="accs"></div>
+    <h3>¿Utiliza algún EPP?</h3>
+    <p class="ayuda" style="margin:6px 0 0">EPP: elementos de protección personal, como casco, guantes o botas.</p>
+    <div class="sn" id="epp"><label><input type="radio" name="epp" value="Sí"><span>Sí</span></label><label><input type="radio" name="epp" value="No" checked><span>No</span></label></div>
+    <div id="eppBox" style="display:none"><label class="campo" for="eppCual">¿Cuáles?</label><input type="text" id="eppCual"></div>
+  </section>
+
+  <!-- ANUAL · 3 -->
+  <section id="s2">
+    <h1>Tu salud</h1>
+    <p class="ayuda">Marcá <b>solo lo que SÍ</b> te pasa. Podés avanzar aunque no marques nada en alguna parte.</p>
+    <h3>¿Estás realizando algún tratamiento?</h3>
+    <div class="sn" id="trat"><label><input type="radio" name="trat" value="Sí"><span>Sí</span></label><label><input type="radio" name="trat" value="No" checked><span>No</span></label></div>
+    <div id="tratBox" style="display:none"><label class="campo" for="tratCual">¿Cuál? <small>Contanos qué tratamiento y desde cuándo</small></label><input type="text" id="tratCual"></div>
+    <div id="pats"></div>
+  </section>
+
+  <!-- ANUAL · 4 -->
+  <section id="s3">
+    <h1>Familia y observaciones</h1>
+    <label class="campo" for="fam">Antecedentes de enfermedades en tu familia <small>Por ejemplo: padre con presión alta, madre con diabetes. Si no hay, dejá en blanco.</small></label>
+    <textarea id="fam"></textarea>
+    <label class="campo" for="obs">¿Algo más que quieras contarle al médico? <small>Es opcional</small></label>
+    <textarea id="obs"></textarea>
+  </section>
+
+  <!-- ADMISIONAL · 2 -->
+  <section id="a1">
+    <h1>Tu trabajo anterior</h1>
+    <p class="ayuda">Contanos sobre tu <b>último</b> trabajo, antes de este.</p>
+    <label class="op" id="primerOp"><input type="checkbox" id="primerTrabajo"><span><b>Es mi primer trabajo</b><small>No trabajé antes en ninguna empresa.</small></span></label>
+    <div id="antBox">
+      <label class="campo" for="empAnt">Nombre de la empresa</label>
+      <input type="text" id="empAnt" autocomplete="off">
+      <label class="campo" for="puestoAnt">¿Qué hacías ahí? <small>Tu puesto o tarea. Por ejemplo: cajero, albañil, vendedor</small></label>
+      <input type="text" id="puestoAnt" autocomplete="off">
+      <label class="campo" for="tiempoAnt">¿Cuánto tiempo estuviste en ese puesto? <small>Por ejemplo: 2 años, 8 meses</small></label>
+      <input type="text" id="tiempoAnt" autocomplete="off">
+    </div>
+    <p class="ayuda" style="margin-top:18px">Ahora marcá <b>solo lo que SÍ</b> te pasó. Lo que no marques se toma como NO.</p>
+    <h3>¿Trabajaste antes en…?</h3>
+    <div id="labsA"></div>
+    <h3>¿Tuviste algún accidente…?</h3>
+    <div id="accsA"></div>
+  </section>
+
+  <!-- ADMISIONAL · 3 -->
+  <section id="a2">
+    <h1>Tu salud</h1>
+    <p class="ayuda">Primero, 2 preguntas que tenés que contestar con Sí o No.</p>
+    <div id="obligs"></div>
+    <p class="ayuda" style="margin-top:18px">Después, marcá <b>solo lo que SÍ</b> te pasa o te pasó. Lo que no marques se toma como NO.</p>
+    <h3>¿Tuviste o tenés…?</h3>
+    <div id="pers"></div>
+    <label class="campo" for="persOtros">Otros <small>Algo que no esté en la lista. Es opcional.</small></label>
+    <input type="text" id="persOtros" autocomplete="off">
+  </section>
+
+  <!-- ADMISIONAL · 4 -->
+  <section id="a3">
+    <h1>¿Tenés alguna de estas condiciones?</h1>
+    <p class="ayuda">Marcá <b>solo lo que SÍ</b> tenés o te dijo un médico que tenés. Si no tenés ninguna, tocá Siguiente.</p>
+    <div id="port"></div>
+  </section>
+
+  <!-- ADMISIONAL · 5 -->
+  <section id="a4">
+    <h1>Hábitos y medicamentos</h1>
+    <p class="ayuda">Marcá <b>solo lo que SÍ</b> hacés.</p>
+    <h3>Hábitos</h3>
+    <div id="habs"></div>
+    <label class="campo" for="habOtros">Otros hábitos <small>Es opcional</small></label>
+    <input type="text" id="habOtros" autocomplete="off">
+    <h3>Medicamentos que tomás hoy</h3>
+    <p class="ayuda" style="margin:6px 0 0">Escribí el nombre de cada medicamento. Si no tomás ninguno, dejalo en blanco.</p>
+    <input type="text" class="med" aria-label="Medicamento 1" placeholder="Medicamento 1">
+    <input type="text" class="med" aria-label="Medicamento 2" placeholder="Medicamento 2">
+    <input type="text" class="med" aria-label="Medicamento 3" placeholder="Medicamento 3">
+    <input type="text" class="med" aria-label="Medicamento 4" placeholder="Medicamento 4">
+    <label class="campo" for="obsA">¿Algo más que quieras contarle al médico? <small>Es opcional</small></label>
+    <textarea id="obsA"></textarea>
+  </section>
+
+  <!-- REVISAR (los dos tipos) -->
+  <section id="s4">
+    <h1>Revisá y enviá</h1>
+    <div class="resumen" id="resumen"></div>
+    <div class="nota">Este cuestionario tiene carácter de <b>Declaración Jurada</b>. Lo que marcaste lo va a ver el equipo médico de Gente Saludable.</div>
+    <label class="op" id="juraOp"><input type="checkbox" id="jura"><span><b>Declaro que lo que completé es verdad.</b></span></label>
+  </section>
+
+  <section id="fin">
+    <div class="listo">
+      <div class="ok" aria-hidden="true">✓</div>
+      <h1>¡Listo! Ya recibimos tus datos</h1>
+      <p id="finMsg" style="font-size:18px"></p>
+      <p class="ayuda">Ahora pasá con el médico cuando te llamen. No necesitás hacer nada más.</p>
+    </div>
+  </section>
+
+  <p class="err" id="err" role="alert"></p>
+</main>
+<nav id="nav"><button type="button" id="atras">Atrás</button><button type="button" id="sigue">Siguiente</button></nav>
+
+<script>
+/* ====== Página del formulario en GitHub Pages ======
+   Habla con la planilla por internet, sin usar la sesión de Google del celular:
+   así funciona aunque el paciente tenga varias cuentas de Google.
+   Esta página no guarda datos: todo va directo a la planilla de Gente Saludable. */
+var API = 'https://script.google.com/macros/s/AKfycbzkWLgSnZQRTHKVWdlrx4JIuHkGWaC35p-iAY-sg_CeZlfbzLPwJ7gEmkKFFY15nXdgGw/exec';
+var CAT = null, EMPRESAS = [];
+var TIPO_URL = (function(){
+  var m = /[?&]tipo=([^&#]*)/i.exec(location.search), t = m ? decodeURIComponent(m[1]).toLowerCase() : '';
+  return /^adm/.test(t) ? 'admisional' : /^(anual|peri)/.test(t) ? 'anual' : '';
+})();
+function corredor(exito, falla){
+  return {
+    withSuccessHandler: function(f){ return corredor(f, falla); },
+    withFailureHandler: function(f){ return corredor(exito, f); },
+    registrarPaciente: function(d){
+      fetch(API, { method: 'POST', headers: { 'Content-Type': 'text/plain;charset=utf-8' }, body: JSON.stringify({ accion: 'registrarPaciente', datos: d }), redirect: 'follow', credentials: 'omit' })
+        .then(function(r){ if(!r.ok) throw new Error('HTTP ' + r.status); return r.json(); })
+        .then(function(r){ if(exito) exito(r); })
+        .catch(function(e){ if(falla) falla(e); });
+    }
+  };
+}
+var google = { script: { get run(){ return corredor(null, null); } } };
+var RUTAS = { anual: ['s0','s1','s2','s3','s4'], admisional: ['s0','a1','a2','a3','a4','s4'] };
+var SECCIONES = ['sTipo','s0','s1','s2','s3','a1','a2','a3','a4','s4','fin'];
+var TIPO = '', PASOS = [], paso = 0, enviando = false;
+function $(id){return document.getElementById(id)}
+function esc(s){return String(s).replace(/[&<>"']/g,function(c){return {'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]})}
+function todos(sel){return Array.prototype.slice.call(document.querySelectorAll(sel))}
+
+/* una opción marcable: [id, texto, (pregunta para especificar), (ayuda simple)] */
+function opcion(it,pref,texto){
+  var h='<label class="op" data-id="'+it[0]+'"><input type="checkbox" data-'+pref+'="'+it[0]+'"><span>'+esc(texto||it[1])+(it[3]?'<small>'+esc(it[3])+'</small>':'')+'</span></label>';
+  if(it[2]) h+='<div class="esp" data-esp="'+it[0]+'" style="display:none"><input type="text" data-espv="'+it[0]+'" placeholder="'+esc(it[2])+'" aria-label="'+esc(it[2])+'"></div>';
+  return h;
+}
+function armar(){
+  /* anual */
+  $('labs').innerHTML=CAT.laborales.map(function(i){return opcion(i,'lab')}).join('');
+  $('accs').innerHTML=CAT.accidentes.map(function(i){return opcion(i,'acc')}).join('');
+  $('pats').innerHTML=CAT.patologicos.map(function(g){
+    return '<h3>'+esc(g.g)+'</h3>'+g.items.map(function(i){return opcion(i,'pat')}).join('');
+  }).join('');
+  /* admisional */
+  $('labsA').innerHTML=CAT.laborales.map(function(i){return opcion(i,'laba')}).join('');
+  $('accsA').innerHTML=CAT.accidentes.map(function(i){return opcion(i,'acca',CAT.accidentesAdm[i[0]]||i[1])}).join('');
+  $('obligs').innerHTML=CAT.obligatorias.map(function(o){
+    return '<div class="oblig" id="ob_'+o[0]+'"><span class="marca">Obligatoria</span><p>'+esc(o[2])+'</p>'
+      +'<div class="sn"><label><input type="radio" name="'+o[0]+'" value="Sí"><span>Sí</span></label><label><input type="radio" name="'+o[0]+'" value="No"><span>No</span></label></div></div>';
+  }).join('');
+  $('pers').innerHTML=CAT.personales.map(function(i){return opcion(i,'pers')}).join('');
+  $('port').innerHTML=CAT.portador.map(function(i){return opcion(i,'port')}).join('');
+  $('habs').innerHTML=CAT.habitos.map(function(i){return opcion(i,'hab')}).join('');
+  var o='<option value="">Elegí la empresa</option>'+EMPRESAS.map(function(e){return '<option>'+esc(e)+'</option>'}).join('')+'<option value="__otra">Otra empresa</option>';
+  $('emp').innerHTML=o;
+}
+function elegirTipo(t){
+  TIPO = t; PASOS = RUTAS[t]; paso = 0;
+  var adm = t==='admisional';
+  var chip=$('chipTipo'); chip.style.display='inline-block';
+  chip.className='chipTipo '+(adm?'adm':'anu');
+  chip.textContent = adm ? 'Examen de ingreso (Admisional)' : 'Examen anual (Periódico)';
+  $('empLbl').textContent = adm ? 'Empresa donde vas a trabajar' : 'Empresa donde trabajás';
+  $('tareaLbl').innerHTML = (adm ? 'Tarea que vas a desempeñar' : 'Tarea que desempeñás')+' <small>Por ejemplo: chofer, operario, administrativo</small>';
+  $('cambiarTipo').style.display = TIPO_URL ? 'none' : 'inline';
+  var p=''; for(var i=0;i<PASOS.length;i++) p+='<i></i>'; $('prog').innerHTML=p;
+  $('prog').style.display='flex'; $('nav').style.display='flex';
+  pintar();
+}
+function verSolo(id){ SECCIONES.forEach(function(s){ $(s).className = (s===id)?'ver':''; }); }
+function pintar(){
+  verSolo(PASOS[paso]);
+  Array.prototype.forEach.call($('prog').children,function(el,i){ el.className=(i<=paso)?'on':'' });
+  $('atras').style.visibility = paso===0 ? 'hidden' : 'visible';
+  $('sigue').textContent = paso===PASOS.length-1 ? 'Enviar mis datos' : 'Siguiente';
+  if(PASOS[paso]==='s4') resumir();
+  $('err').className='err';
+  window.scrollTo(0,0);
+}
+function mostrarElegir(){
+  TIPO=''; verSolo('sTipo');
+  $('prog').style.display='none'; $('nav').style.display='none'; $('chipTipo').style.display='none';
+  window.scrollTo(0,0);
+}
+document.addEventListener('change',function(e){
+  var t=e.target;
+  if(t.type==='checkbox'&&t.closest('.op')){
+    var op=t.closest('.op'); op.className='op'+(t.checked?' on':'');
+    var id=op.getAttribute('data-id');
+    if(id){ var b=op.parentNode.querySelector('[data-esp="'+id+'"]'); if(b) b.style.display=t.checked?'block':'none'; }
+  }
+  if(t.id==='primerTrabajo'){
+    ['empAnt','puestoAnt','tiempoAnt'].forEach(function(k){ $(k).disabled=t.checked; });
+    $('antBox').style.opacity = t.checked ? '.5' : '1';
+  }
+  if(t.name==='epp') $('eppBox').style.display = t.value==='Sí'?'block':'none';
+  if(t.name==='trat') $('tratBox').style.display = t.value==='Sí'?'block':'none';
+  if(t.name==='rx_prev'||t.name==='colores') $('ob_'+t.name).className='oblig';
+  /* si el aviso rojo ya no corresponde, se borra */
+  if($('err').className==='err ver' && !validarSinMarcar()) $('err').className='err';
+  if(t.id==='emp') $('empOtra').style.display = t.value==='__otra'?'block':'none';
+  if(t.id==='nac') edad();
+});
+function edad(){
+  var v=$('nac').value; if(!v){$('edad').textContent='—';return}
+  var p=v.split('-'), h=new Date(), e=h.getFullYear()-(+p[0]);
+  if(h.getMonth()+1<+p[1]||(h.getMonth()+1===+p[1]&&h.getDate()<+p[2])) e--;
+  $('edad').textContent=(e>=0&&e<120)?e:'—';
+}
+function marcados(attr){
+  return todos('input['+attr+']:checked').map(function(i){return i.getAttribute(attr)});
+}
+function radio(nombre){ var r=document.querySelector('input[name="'+nombre+'"]:checked'); return r?r.value:''; }
+function val(id){return $(id).value.replace(/^\s+|\s+$/g,'')}
+function mostrarError(m){ var e=$('err'); e.textContent=m; e.className='err ver'; e.scrollIntoView({block:'center'}); }
+
+function validar(){
+  var s=PASOS[paso];
+  if(s==='s0'){
+    if(!val('ape')||!val('nom')) return 'Escribí tus apellidos y tus nombres.';
+    if(!/^[0-9.\- ]{4,15}$/.test(val('ci'))) return 'Revisá tu número de cédula: solo números.';
+    if(!$('nac').value) return 'Elegí tu fecha de nacimiento.';
+    var e=parseInt($('edad').textContent,10); if(isNaN(e)||e<14||e>100) return 'Revisá tu fecha de nacimiento.';
+    if(!$('emp').value) return 'Elegí la empresa.';
+    if($('emp').value==='__otra'&&!val('empOtra')) return 'Escribí el nombre de la empresa.';
+    if(!val('tarea')) return TIPO==='admisional' ? 'Escribí la tarea que vas a desempeñar.' : 'Escribí la tarea que desempeñás.';
+    if(val('tel').replace(/\D/g,'').length<7) return 'Revisá tu número de teléfono.';
+  }
+  if(s==='a1' && !$('primerTrabajo').checked){
+    if(!val('empAnt')) return 'Escribí el nombre de tu última empresa, o marcá "Es mi primer trabajo".';
+    if(!val('puestoAnt')) return 'Escribí qué hacías en tu trabajo anterior.';
+  }
+  if(s==='a2'){
+    for(var i=0;i<CAT.obligatorias.length;i++){
+      var o=CAT.obligatorias[i];
+      if(!radio(o[0])){ if(!soloMirar) $('ob_'+o[0]).className='oblig falta'; return 'Respondé Sí o No: '+o[2]; }
+    }
+  }
+  if(s==='s4' && !$('jura').checked) return 'Para enviar, marcá que lo que completaste es verdad.';
+  return '';
+}
+var soloMirar = false;
+function validarSinMarcar(){ soloMirar = true; try { return validar(); } finally { soloMirar = false; } }
+function propio(s){ return s.toLowerCase().replace(/(^|[\s\-'])([a-záéíóúüñ])/g,function(m,a,b){return a+b.toUpperCase()}); }
+function datos(){
+  var esp={}; todos('[data-espv]').forEach(function(i){ if(i.value) esp[i.getAttribute('data-espv')]=i.value; });
+  var d = {
+    tipo:TIPO,
+    ape:val('ape'), nom:val('nom'), ci:val('ci'), nac:$('nac').value,
+    emp: $('emp').value==='__otra'?val('empOtra'):$('emp').value,
+    dom:val('dom'), tel:val('tel'), tarea:val('tarea'), esp:esp, jura:$('jura').checked
+  };
+  if(TIPO==='admisional'){
+    d.primerTrabajo=$('primerTrabajo').checked;
+    d.empAnt=val('empAnt'); d.puestoAnt=val('puestoAnt'); d.tiempoAnt=val('tiempoAnt');
+    d.laborales=marcados('data-laba'); d.accidentes=marcados('data-acca');
+    d.rx_prev=radio('rx_prev'); d.colores=radio('colores');
+    d.pers=marcados('data-pers'); d.persOtros=val('persOtros');
+    d.port=marcados('data-port');
+    d.hab=marcados('data-hab'); d.habOtros=val('habOtros');
+    d.meds=todos('input.med').map(function(i){return i.value.replace(/^\s+|\s+$/g,'')}).filter(String);
+    d.obs=val('obsA');
+  } else {
+    d.laborales=marcados('data-lab'); d.accidentes=marcados('data-acc');
+    d.epp=radio('epp')||'No'; d.eppCual=val('eppCual');
+    d.trat=radio('trat')||'No'; d.tratCual=val('tratCual');
+    d.pat=marcados('data-pat'); d.fam=val('fam'); d.obs=val('obs');
+  }
+  return d;
+}
+function resumir(){
+  var d=datos();
+  var h='<b>'+esc(d.ape.toUpperCase())+', '+esc(propio(d.nom))+'</b><br>Cédula '+esc(d.ci)+' · '+esc(d.emp)+'<br>';
+  if(TIPO==='admisional'){
+    h+='Trabajo anterior: <b>'+esc(d.primerTrabajo?'es tu primer trabajo':(d.empAnt||'—'))+'</b><br>'
+      +'Radiografía de tórax: <b>'+esc(d.rx_prev)+'</b> · Distinguís los colores: <b>'+esc(d.colores)+'</b><br>'
+      +'Marcaste <b>'+(d.laborales.length+d.accidentes.length)+'</b> en trabajo y accidentes, <b>'+d.pers.length+'</b> en salud, <b>'+d.port.length+'</b> condiciones y <b>'+d.hab.length+'</b> hábitos.<br>'
+      +'Medicamentos: <b>'+(d.meds.length?esc(d.meds.join(', ')):'ninguno')+'</b>';
+  } else {
+    h+='Marcaste <b>'+d.laborales.length+'</b> en trabajo, <b>'+d.accidentes.length+'</b> en accidentes y <b>'+d.pat.length+'</b> en salud.';
+  }
+  $('resumen').innerHTML=h;
+}
+$('sigue').addEventListener('click',function(){
+  if(enviando) return;
+  var m=validar(); if(m){ mostrarError(m); return; }
+  if(paso<PASOS.length-1){ paso++; pintar(); return; }
+  enviando=true; $('sigue').disabled=true; $('sigue').textContent='Enviando…';
+  google.script.run
+    .withSuccessHandler(function(r){
+      enviando=false; $('sigue').disabled=false;
+      if(!r||!r.ok){ $('sigue').textContent='Enviar mis datos'; mostrarError((r&&r.error)||'No se pudo enviar. Probá de nuevo.'); return; }
+      verSolo('fin'); $('nav').style.display='none'; $('prog').style.display='none'; $('err').className='err';
+      $('finMsg').innerHTML=(r.repetido?'Ya habías enviado tus datos hoy. ':'')+'Quedó registrado el <b>'+esc(r.ts)+'</b>.<br>Tu código: <b>'+esc(r.id)+'</b>';
+      window.scrollTo(0,0);
+    })
+    .withFailureHandler(function(e){
+      enviando=false; $('sigue').disabled=false; $('sigue').textContent='Enviar mis datos';
+      mostrarError('No se pudo enviar. Revisá tu conexión y probá de nuevo.');
+    })
+    .registrarPaciente(datos());
+});
+$('atras').addEventListener('click',function(){ if(paso>0){ paso--; pintar(); }});
+$('cambiarTipo').addEventListener('click',mostrarElegir);
+todos('.elegir button').forEach(function(b){ b.addEventListener('click',function(){ elegirTipo(b.getAttribute('data-tipo')); }); });
+function arrancar(){
+  $('sCarga').className = '';
+  armar();
+  if(TIPO_URL==='admisional'||TIPO_URL==='anual') elegirTipo(TIPO_URL); else mostrarElegir();
+}
+function cargarDatos(){
+  $('nav').style.display = 'none'; $('prog').style.display = 'none';
+  $('cargaMsg').textContent = 'Cargando el formulario…'; $('reintentar').style.display = 'none';
+  fetch(API + '?accion=datos', { redirect: 'follow', credentials: 'omit' })
+    .then(function(r){ if(!r.ok) throw new Error('HTTP ' + r.status); return r.json(); })
+    .then(function(d){ if(!d || !d.ok || !d.catalogo) throw new Error('respuesta'); CAT = d.catalogo; EMPRESAS = d.empresas || []; arrancar(); })
+    .catch(function(){
+      $('cargaMsg').textContent = 'No se pudo cargar el formulario. Revisá que tengas internet y tocá "Probar de nuevo". Si sigue sin andar, avisá en recepción.';
+      $('reintentar').style.display = 'inline-block';
+    });
+}
+$('reintentar').addEventListener('click', cargarDatos);
+cargarDatos();
+</script>
+</body>
+</html>
